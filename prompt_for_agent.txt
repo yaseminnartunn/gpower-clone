@@ -1,0 +1,196 @@
+
+YZM301 TEARDOWN SPRINT — GÖREV TANIMI
+======================================
+
+Sen bir yazılım mühendisliği asistanısın. Aşağıdaki görevleri eksiksiz ve yüksek kalitede tamamlamanı istiyorum.
+
+PROJE ÖZETI
+-----------
+G*Power 3.1.9.7 istatistik programının hesaplama motorunu sıfırdan yeniden yazdık.
+Bize atanan test ailesi: t2-indep (iki bağımsız grup t-testi)
+Zaten bir engine.py dosyamız mevcut (src/engine.py).
+Görevin bu projeyi 4 kritik alanda mükemmelleştirmek.
+
+
+GÖREV 1 — HALLUCINATIONS.md (Halüsinasyon Günlüğü)
+----------------------------------------------------
+Amacımız: Ajanın (veya bizim) yanlış çıkardığı davranışları belgelemek ve yakalamak.
+
+Yap:
+- engine.py'yi kullanarak ajanın yanlış tahmin edebileceği en az 5 kritik davranış belirle.
+- Her halüsinasyon için şu formatı kullan:
+
+  ## Halüsinasyon #N
+  ### İddia
+  [Ajanın yanlış söylediği şey]
+  ### Gerçek Davranış
+  [G*Power'ın gerçekte ne yaptığı]
+  ### Nasıl Fark Edildi
+  [Hangi test veya karşılaştırma bunu ortaya koydu]
+  ### Yakalayan Test
+  [test dosyasındaki fonksiyon adı]
+
+- Özellikle şu konularda halüsinasyon ara:
+  * G*Power'ın n2'yi nasıl yuvarladığı (ceil mi, round mı?)
+  * power <= alpha durumunda ne oluyor?
+  * ratio != 1 olduğunda n1 ve n2 nasıl hesaplanıyor?
+  * d çok küçük olduğunda (0.001 gibi) ne oluyor?
+  * df (degrees of freedom) hesabı doğru mu?
+
+Çıktı: HALLUCINATIONS.md dosyası (kök dizine)
+
+
+GÖREV 2 — SINIR DEĞER TESTLERİ (tests/ klasörü)
+-------------------------------------------------
+Amacımız: Hataların en çok çıktığı uç noktalarda motorun doğruluğunu kanıtlamak.
+
+Yap:
+- tests/test_boundary.py dosyası oluştur.
+- pytest kullan.
+- Şu sınır değerleri mutlaka test et:
+
+  a) ÇOOK KÜÇÜK ETKİ BÜYÜKLÜĞÜ
+     d = 0.01, alpha = 0.05, power = 0.80, ratio = 1, tails = 2
+     → n çok büyük çıkmalı (binlerce)
+
+  b) ÇOK BÜYÜK ETKİ BÜYÜKLÜĞÜ
+     d = 5.0, alpha = 0.05, power = 0.80, ratio = 1, tails = 2
+     → n çok küçük çıkmalı (10'dan az)
+
+  c) GÜÇ SINIRA EŞİT VEYA KÜÇÜK
+     power = 0.05 (alpha'ya eşit) → EngineError fırlatılmalı
+     power = 0.04 (alpha'dan küçük) → EngineError fırlatılmalı
+
+  d) EŞİT OLMAYAN GRUP ORANI
+     ratio = 2.0 → n2 = ceil(n1 * 2) olmalı
+     ratio = 0.5 → n2 = ceil(n1 * 0.5) olmalı
+     Kontrol: n1 + n2 = n_total
+
+  e) GEÇERSİZ GİRDİLER
+     alpha = 0 → hata
+     alpha = 1 → hata
+     alpha = -0.05 → hata
+     d = 0 → hata
+     d = -0.5 → hata
+     ratio = 0 → hata
+     tails = 3 → hata
+     n1 = 1 (post-hoc) → hata (minimum 2 olmalı)
+
+  f) TEK KUYRUK vs İKİ KUYRUK
+     Aynı parametrelerle tails=1 ve tails=2 karşılaştır.
+     tails=1 her zaman daha küçük n vermeli.
+
+  g) REFERANS VEKTÖRLER (G*Power'ın verdiği kesin değerler)
+     Bu değerler G*Power 3.1.9.7 arayüzünden alınmıştır:
+
+     Vektör 1: d=0.5, alpha=0.05, power=0.95, ratio=1, tails=2
+     Beklenen: n1=105, n2=105, n_total=210, actual_power≈0.9501
+
+     Vektör 2: d=0.8, alpha=0.05, power=0.80, ratio=1, tails=2
+     Beklenen: n1=26, n2=26, n_total=52
+
+     Vektör 3: d=0.2, alpha=0.05, power=0.80, ratio=1, tails=2
+     Beklenen: n1=197, n2=197, n_total=394
+
+     Her N değeri TAM eşleşmeli (tolerans: 0).
+     Diğer değerler (power, critical_t, ncp) 4 ondalık basamakta eşleşmeli.
+
+Çıktı: tests/test_boundary.py
+
+
+GÖREV 3 — TÜRKÇE AI AJANI (src/agent.py)
+------------------------------------------
+Amacımız: Bir hekimin/araştırmacının kendi diliyle sorduğu soruyu anlayıp
+MCP aracını çağırarak yanıtlayan bir ajan yazmak.
+
+Yap:
+- src/agent.py dosyası oluştur.
+- Kullanıcıdan Türkçe doğal dil girişi al.
+- LLM kullanarak soruyu parse et (parametreleri çıkar).
+- engine.py'yi çağır (LLM hesaplama YAPAMAZ, hesap her zaman motordan gelir).
+- Sonucu Türkçe, anlaşılır şekilde açıkla.
+
+Örnek diyalog:
+  Kullanıcı: "İlaç grubunda orta büyüklükte etki bekliyorum,
+              %5 yanılma payı ile %80 güç istiyorum, kaç hasta lazım?"
+  Ajan: "Hesapladım. Cohen d=0.5 (orta etki), alpha=0.05, power=0.80
+         için her grupta 64 hasta, toplamda 128 hastaya ihtiyacınız var."
+
+- 10 soruluk değerlendirme seti ekle (farklı zorluk seviyeleri):
+  * Kolay: tüm parametreler açıkça verilmiş
+  * Orta: etki büyüklüğü "küçük/orta/büyük" olarak verilmiş (0.2/0.5/0.8)
+  * Zor: klinik bağlam var, parametreler çıkarılmalı
+  * Geçersiz: eksik parametre → kullanıcıya sor
+
+- Her soru için log tut:
+  * Hangi parametreler çıkarıldı?
+  * Doğru test ailesi seçildi mi? (t2-indep)
+  * Hesaplama sonucu neydi?
+  * Kaç token harcandı?
+
+Çıktı: src/agent.py + docs/agent_eval_results.md
+
+
+GÖREV 4 — TOKEN KARŞILAŞTIRMASI (AGENT_COST.md)
+-------------------------------------------------
+Amacımız: MCP yolunun GUI yoluna göre ne kadar daha ucuz olduğunu ölçmek.
+
+Yap:
+- Aynı 5 soruyu iki farklı yolla çöz ve karşılaştır:
+
+  YOL A — MCP üzerinden:
+  Kullanıcı sorusu → ajan → MCP aracı → engine.py → cevap
+  Ölç: toplam token sayısı, süre (ms), doğruluk
+
+  YOL B — GUI simülasyonu (ekran görüntüsü yolu):
+  Bir G*Power ekran görüntüsü al (oracle/ klasöründen).
+  Bunu base64'e çevir ve bir LLM'e gönder.
+  "Bu ekranda ne yazıyor, sonucu oku" diye sor.
+  Ölç: toplam token sayısı, süre (ms), doğruluk
+
+- Sonuçları tablo halinde karşılaştır:
+
+  | Soru | MCP Token | GUI Token | Token Tasarrufu | MCP Süre | GUI Süre | MCP Doğru | GUI Doğru |
+  |------|-----------|-----------|-----------------|----------|----------|-----------|-----------|
+  | 1    |           |           |                 |          |          |           |           |
+  ...
+
+- Sonunda yorum yaz: "MCP yolu ortalama X kat daha az token harcıyor."
+
+Çıktı: AGENT_COST.md
+
+
+GENEL KURALLAR
+--------------
+1. engine.py'yi DEĞIŞTIRME. Sadece onu çağır.
+2. Hesaplama ASLA LLM'den gelmez, her zaman engine.py'den gelir.
+3. Tüm dosyalar UTF-8 kodlamasında olsun.
+4. Her test pytest ile çalışabilir olsun.
+5. Yorum satırları Türkçe olabilir.
+6. Hata mesajları hem Türkçe hem İngilizce olsun.
+
+DOSYA YAPISI (tamamlandığında böyle görünmeli)
+----------------------------------------------
+ödev/
+├── src/
+│   ├── engine.py         ← mevcut, değiştirme
+│   ├── cli.py            ← CLI girişi (eğer yoksa yaz)
+│   ├── mcp_server.py     ← MCP sunucusu (eğer yoksa yaz)
+│   └── agent.py          ← Türkçe AI ajanı
+├── tests/
+│   ├── test_boundary.py  ← sınır değer testleri
+│   └── test_differential.py ← G*Power karşılaştırma testleri
+├── oracle/               ← G*Power ekran görüntüleri ve CSV
+├── prompts/              ← ajan oturumu promptları
+├── SPEC.md               ← Gherkin formatında spec
+├── LEDGER.md             ← kanıt defteri
+├── HALLUCINATIONS.md     ← halüsinasyon günlüğü
+└── AGENT_COST.md         ← token karşılaştırması
+
+ÖNCE BU SIRAYA GÖRE ÇALIŞMASINI İSTİYORUM:
+1. tests/test_boundary.py
+2. HALLUCINATIONS.md
+3. src/agent.py
+4. AGENT_COST.md
+
+Başlayabilirsin.

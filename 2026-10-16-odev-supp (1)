@@ -1,0 +1,186 @@
+YZM301 · TEARDOWN SPRINT
+G*Power'ı Sök, Kanıtla, Yeniden Yaz, Ajan Çağına Taşı
+
+Süre: 1 hafta
+Teslim: odev formda
+Takım: En fazla 4 kişi (bireysel çalışma serbest)
+
+
+NEDEN BU SPRINT?
+
+Klasik yazılım mühendisliğinde yol bellidir: müşteriyi dinle, analiz et, tasarla, kodla, test et. Spec'ten koda gideriz.
+
+Bu sprintte yönü tersine çeviriyoruz: koddan kanıta, kanıttan spec'e. Elimizde çalışan bir ürün var ama kaynak kodu yok. REA ile onu söküyor, davranışını kanıtlarıyla çıkarıyor, temiz odada yeniden inşa ediyor ve orijinaliyle ölçüyoruz.
+
+Neden G*Power?
+- Hekimlerin ve araştırmacıların yoğun kullandığı, sağlık alanının standart bir aracı. Sizin dilinizden çok uzak bir alanın aracı; jargonunu anlamak zor. Bu bilinçli bir seçim: farklı disiplinlerden insanlarla kısa sürede ortak dil kurmak bu çağın yazılımcısından beklenen beceri.
+- Yalnızca grafik arayüzü (GUI) var. Bir AI ajanı onu kullanmak için ekran görüntüsü almak zorunda. Kabaca söylersek bir ekran görüntüsü yüzlerce, hatta binlerce token demek; birkaç kelimelik bir metin çağrısı ise birkaç token.
+
+Her arayüz bir maliyet transferidir. Yük yok olmaz: ya ajan her çağrıda öder, ya sistem bir kez.
+
+Hedefimiz G*Power'ı yeniden icat etmek değil. Hedefimiz onu ajan çağına uygun hâle getirmek: hesabı az token harcayan bir CLI'nin, MCP sunucusunun ve bir hekimin kendi diliyle soru sorabildiği bir ajanın arkasına koymak. En iyi çalışmaları, takımların onayıyla, G*Power ekibine bir öneri olarak götürmeyi hedefliyorum.
+
+Testler hataların varlığını gösterebilir, yokluğunu değil. (Dijkstra)
+
+
+NE YAPACAKSINIZ?
+
+1. Sök: G*Power'ı REA ve Ghidra ile inceleyin, hesap motorunu bulun.
+2. Kanıtla: Her iddiayı bir kanıta bağlayın (kanıt defteri).
+3. Spec çıkar: Kanıtlardan kabul kriterli bir SPEC.md yazın.
+4. Yeniden yaz: Temiz oda kuralıyla, kendi seçtiğiniz dilde.
+5. Diferansiyel test: Aynı girdileri hem G*Power'a hem yeniden yazımınıza verin, farkı ölçün. Fark varsa ya sizin hatanızdır ya da kaçırdığınız bir kuraldır.
+6. Ajan çağına taşı: CLI zorunlu; MCP ve AI ajanı bonus.
+
+
+TEST AİLELERİ (takım/konu dagilim bilgisi excel de)
+
+1) t testi, iki bağımsız ortalama (ilaç ve plasebo)
+2) t testi, eşleştirilmiş ortalama (önce ve sonra tansiyon)
+3) F testi, tek yönlü ANOVA (üç tedavi kolu)
+4) χ² testi, olumsallık tablosu (yanıt oranları)
+5) Bonus: F testi, çoklu regresyon R² (risk faktörleri)
+
+Her takım yalnızca kendi ailesini gerçekler. Modlar: a priori (N hesapla) ve post hoc (gücü hesapla).
+
+
+KURULUM (ilk iş)
+
+- REA (npx rea-agents setup) ve kayıtlı bir ajan
+- Ghidra (ghidra-sre.org) ve JDK 21
+- G*Power 3.1.9.7 (Windows), YALNIZCA resmi sayfadan: psychologie.hhu.de, G*Power sayfası
+
+Ghidra Mac ve Linux'ta da çalışır; .exe dosyasını her işletim sisteminde statik olarak inceleyebilirsiniz. Ancak referans değerleri G*Power arayüzünden toplayacağınız için takımda en az bir Windows makinesi (ya da laboratuvar bilgisayarı) bulunmalı.
+
+Kontrol: Ajanınıza "REA araçları ve Ghidra sağlayıcısı bu oturumda kullanılabilir mi?" diye sorun. Cevabın ekran görüntüsünü README'ye koyun.
+
+Uyarı: REA çok popüler olduğu için benzer isimli sahte repolar ve paketler dolaşıyor. Yalnızca github.com/morluto/rea, rea.tools ve npm'deki rea-agents paketini kullanın.
+
+
+PUANLAMA
+
+TEMEL KATMAN: CLI (85 puan)
+Diferansiyel test (uyum oranı ve uyuşmazlık açıklamaları): 25
+Kanıt izlenebilirliği ([REA] bulguları): 20
+Halüsinasyon günlüğü: 15
+Spec kalitesi (gizli vektörlerim üzerinde): 15
+Ajan maliyet ve süreç günlüğü: 5
+Demo (60 saniyelik CLI videosu): 5
+
+KAPI
+Gizli test vektörlerimde N değeri en az %90 oranında TAM eşleşmeli. Bu oran tutmazsa bonus katmanlar puanlanmaz. Yanlış hesaplayan bir motoru MCP ile sarmak, yanlış sonucu daha ucuza dağıtmak demektir.
+
++15 MCP SUNUCUSU (toplam 100)
+- Aynı motoru çağıran ince bir adaptör; hesap mantığı MCP katmanına kopyalanmaz.
+- Araç şeması (girdi ve çıktı alanları) README'de belgelenmeli.
+- CLI ile MCP'nin aynı girdide aynı çıktıyı verdiğini gösteren testler.
+
++10 AI AJANI (toplam 110, MCP şart)
+- Hekimin kendi diliyle sorduğu klinik soruyu (Türkçe) MCP aracını çağırarak yanıtlayan bir ajan.
+- 10 soruluk değerlendirme seti: her soru için beklenen test ailesi, parametreler ve N. Doğru seçim oranını raporlayın.
+- Araç çağrı kayıtları (log).
+- Ölçülmüş token karşılaştırması: aynı sorular MCP üzerinden ve GUI üzerinden (ekran görüntüsüyle) çözülür; iki yolun token, süre ve doğruluk değerleri raporlanır.
+- Ajan hesabı kendisi YAPMAZ. Hesap her zaman motordan gelir.
+
+İsteğe bağlı (ajan katmanı içinde): Doğru işe doğru model.
+Test ailesini seçme adımında Jev gibi hızlı karar veren bir Sistem 1 modeli kullanabilirsiniz.
+- Etiketler: t2-indep, t-paired, anova-oneway, chi2-contingency, multireg-r2, ambiguous, unsupported
+- Güven 0,75'in altındaysa ya da etiket ambiguous veya unsupported ise karar araştırmacıya sorulur.
+- Jev hiçbir sayı üretmez; N, güç ve etki büyüklüğü değeri asla Jev'den gelmez.
+- Kalibrasyonu kendiniz ölçün: "%90 güven" dediği seçimlerin gerçekte yüzde kaçı doğru?
+- Aynı soruları İngilizce çeviriyle de ölçüp iki dili karşılaştırın; Türkçe için yayımlanmış bir ölçüm yok.
+- Jev erişimi alamazsanız aynı etiket setine kısıtlanmış bir LLM kullanın ve bunu README'de yazın.
+Hatırlayın: tip güvenliği doğruluk değildir.
+
+
+UYGULAMA KISITLARI
+
+a) CLI SÖZLEŞMESİ
+Dil serbest, ama CLI ve JSON çıktısı sabittir. Gizli vektörlerimi bütün takımlarda aynı düzenekle otomatik çalıştıracağım.
+
+Örnek çağrı:
+gpower-clone --test t2-indep --mode a-priori --tails 2 --d 0.5 --alpha 0.05 --power 0.95 --ratio 1
+
+Beklenen çıktı (tek satır JSON):
+{"n1":105,"n2":105,"n_total":210,"actual_power":0.9501,"critical":1.9714,"df":208,"ncp":3.6228}
+
+Geçersiz girdide: {"error":"<açıklama>"} ve sıfırdan farklı çıkış kodu.
+Diğer aileler için parametre adları: [LİNK: CONTRACT.md]
+
+b) KÜTÜPHANE
+Dağılım fonksiyonları için scipy (ya da dilinizdeki eşdeğeri) serbesttir. Puan çözücüden (N arama), yuvarlamadan ve df hesabından gelir. Noncentral dağılımı kendiniz yazarsanız scipy'yi yalnızca testlerde kullanın.
+
+c) KÂHİN
+Kâhin, doğru cevabı bilen kaynaktır. Burada kâhin G*Power'ın kendisi.
+- G*Power arayüzünden en az 30 vektör, her biri ekran görüntüsüyle
+- Kılavuzdaki örnekler
+- Ölçek için R'daki pwr ya da Python'daki statsmodels ile 500'den fazla vektör
+
+Not: Bu kütüphaneler N'yi kesirli verir, G*Power yukarı yuvarlar. Bu farkı açıklamak başlı başına bir bulgudur.
+
+d) SINIR DEĞERLER
+Hatalar en çok sınırlarda çıkar. Mutlak değer fonksiyonu -2'de değil, 0'da yanılır. Vektörlerinize mutlaka şunları koyun: d çok küçük, d çok büyük, güç α'ya eşit ya da ondan küçük, eşit olmayan grup oranı, geçersiz girdiler.
+
+e) TOLERANS
+N, n1 ve n2 TAM eşleşmeli. Diğer değerler G*Power'ın ekranda gösterdiği basamak sayısına kadar eşleşmeli.
+
+f) KANIT DEFTERİ ETİKETLERİ
+[DOK] Kılavuzda ya da makalede yazıyor.
+[REA] Binary'den kanıtlandı (fonksiyon adresi ya da dize referansıyla).
+[AJAN] Ajanın çıkarımı; kanıtı yok.
+
+Puan yalnızca [REA] satırlarına verilir. Kılavuzda OLMAYAN davranışları arayın: yuvarlama, eşit olmayan oranda n1/n2 dağılımı, iterasyonun durma koşulu, geçersiz girdiye tepki.
+
+
+TEMİZ ODA KURALI
+
+Soyutlama katmanında kalıyoruz: derdimiz kodun kendisi değil, algoritması ve fikrin özü.
+
+İki AYRI ajan oturumu kullanın:
+Oturum 1 (inceleme): REA ve Ghidra ile çalışır; yalnızca SPEC.md ve kanıt defteri üretir.
+Oturum 2 (yazım): Yeni bir oturumda YALNIZCA SPEC.md ile başlar ve Ghidra çıktısını görmez.
+
+Önce davranışı test olarak yakalayın, sonra yazın: elinizde çalışan bir orijinal var, beklenen değeri ajan değil G*Power belirler.
+
+Her iki oturumun ilk prompt'unu repoya koyun (prompts/ klasörü). Teslim edilen kodda decompile çıktısı YER ALAMAZ. Kanıt defterinde kısa alıntı ve fonksiyon adresi kullanabilirsiniz.
+
+
+TESLİM (GitHub repo linki bu ödeve)
+
+SPEC.md: kabul kriterleri Gherkin formatında
+LEDGER.md: kanıt defteri, [DOK], [REA] ve [AJAN] etiketli
+HALLUCINATIONS.md: ajanın yanlış çıkardığı en az 2 şey, nasıl fark edildiği, hangi testin yakaladığı
+AGENT_COST.md: hangi ajan, yaklaşık token ve maliyet, kaç iterasyon, neyi farklı yapardınız
+prompts/: iki oturumun ilk prompt'ları
+oracle/: G*Power vektörleri (CSV) ve ekran görüntüleri
+src/: yeniden yazım (motor + CLI; varsa MCP ve ajan)
+tests/: diferansiyel test ve uyum raporu
+README.md: kurulum, çalıştırma, sürüm bilgisi, GPower.exe SHA-256 hash'i, demo video linki, yazarlara atıf
+
+Bonus katman yaptıysanız README'nin başında hangi katmanları yaptığınızı açıkça yazın.
+
+
+ETİK VE YASAL KURALLAR
+
+Bu çalışmayı eğitim çerçevesinde yapıyoruz.
+
+1. Yalnızca G*Power 3.1.9.7 (Windows) sökülür. Hastane sistemleri, e-Nabız, MHRS, oyunlar ve ticari yazılımlar kesinlikle kapsam dışıdır.
+2. GPower.exe repoya KONMAZ; .gitignore'a ekleyin. G*Power yalnızca resmi sayfasından dağıtılabilir.
+3. Yeniden yazımınıza "G*Power" adını vermeyin ve onu G*Power gibi sunmayın. README'de yazarlara atıf yapın: Faul, Erdfelder, Lang ve Buchner (2007, 2009).
+4. Ticari araçlar (IDA, Hopper, JEB) yalnızca geçerli lisansla kullanılır. Kırık kopya ya da paylaşılan anahtar yasaktır.
+5. Harici bir AI API'sine yalnızca kurgusal araştırma senaryoları gönderin. Gerçek hasta verisi asla gönderilmez.
+6. Sosyal medyada paylaşırsanız yalnızca bu ders hedefini gösterin.
+
+G*Power'ın yazarları bu aracı bilim dünyasına ücretsiz sundu. Satış ve resmi sayfa dışında dağıtım yasak; decompile hakkında bir hüküm yok. Bu bir izin değil, yalnızca bir yasak bulunmaması. Onların emeğine saygıyla, öğrenmek ve katkı önermek için inceliyoruz.
+
+
+SINAV NOTU
+
+Bu sprint Sommerville'in kitabındaki temeller üzerine kurulu: doğrulama ve geçerleme ("ürünü doğru mu yapıyoruz?" ile "doğru ürünü mü yapıyoruz?"), test seviyeleri, bölüm testi ve sınır değerler, test güdümlü geliştirme, sürüm testi, yeniden kullanım, konfigürasyon yönetimi, host-target geliştirme. Sınavda bu bölümlerden ve onları yeni dünyaya nasıl uyarladığınızdan soru soracağım. Kitabı okuyun.
+
+
+İPUCU
+
+Ajanınız kendinden emin bir açıklama yaptığında sorun: "Bunun kanıtı hangi fonksiyonda?" Cevap veremiyorsa o satır [AJAN] etiketlidir ve diferansiyel testle sınanmalıdır.
+
+Sorularınızı Classroom'daki ödev gönderisine yorum olarak yazın. Birbirine yardım eden takımlar artı puan alır.

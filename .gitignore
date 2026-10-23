@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest cache
+.pytest_cache/
+
+# Binary executable exclusions (Course Requirement)
+GPower.exe
+*.exe
+!gpower-clone.bat
+
+# OS files
+Thumbs.db
+.DS_Store

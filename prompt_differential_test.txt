@@ -1,0 +1,67 @@
+
+YZM301 — DİFERANSİYEL TEST GÖREVI
+===================================
+
+oracle/vectors.csv dosyasında G*Power 3.1.9.7'den alınmış 30 test vektörü var.
+Her satır bir girdi + G*Power'ın verdiği doğru çıktıyı içeriyor.
+
+Görevin: Bu vektörleri kullanarak src/engine.py'yi test eden
+diferansiyel test kodu yaz ve uyum raporunu üret.
+
+
+DOSYA YAPISI
+------------
+oracle/vectors.csv → 30 vektör (kaynak: G*Power 3.1.9.7)
+src/engine.py      → test edilecek hesap motoru
+
+
+YAPILACAKLAR
+------------
+
+1. tests/test_differential.py dosyasını yaz:
+
+   - oracle/vectors.csv dosyasını oku
+   - Her satır için:
+       * tails, d, alpha, power (istenen), ratio değerlerini al
+       * engine.py'deki run_power_analysis() fonksiyonunu çağır
+         (mode="a-priori", test="t2-indep")
+       * Motorun verdiği n1, n2, n_total değerlerini CSV'deki değerlerle karşılaştır
+       * n1, n2, n_total TAM eşleşmeli (tolerans: 0, tam sayı karşılaştırması)
+       * actual_power, critical_t, ncp → 4 ondalık basamakta eşleşmeli
+   - pytest parametrize kullan (her vektör ayrı test case olsun)
+   - Başarısız olan testlerde hangi değerlerin uyuşmadığını göster
+
+2. tests/generate_report.py dosyasını yaz:
+
+   - Tüm 30 vektörü koştur
+   - Şu raporu üret:
+
+     === DİFERANSİYEL TEST RAPORU ===
+     Toplam vektör: 30
+     Başarılı (n TAM eşleşti): XX
+     Başarısız: XX
+     Uyum oranı: %XX.X
+
+     BAŞARISIZ OLANLAR:
+     Vektör #N: d=X, alpha=X, power=X → Beklenen n1=X, Alınan n1=X
+
+     SONUÇ: KAPI KOŞULU → GEÇTI / KALMADI (%90 gerekli)
+
+   - Raporu hem terminale yaz hem tests/differential_report.txt olarak kaydet
+
+3. Raporu koştur ve tests/differential_report.txt dosyasını oluştur.
+
+
+KISITLAR
+--------
+- engine.py'yi değiştirme
+- Sadece n1, n2, n_total TAM eşleşmeli; diğerleri yaklaşık
+- CSV'deki "power" kolonu istenen güç, "actual_power" G*Power'ın gerçek çıktısı
+- ratio kolonu Allocation ratio N2/N1 değeri
+
+
+BEKLENEN ÇIKTI
+--------------
+- tests/test_differential.py  → pytest ile çalışan test dosyası
+- tests/generate_report.py    → rapor üretici script
+- tests/differential_report.txt → uyum raporu

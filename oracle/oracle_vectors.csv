@@ -1,0 +1,34 @@
+id,desc,mode,tails,d,alpha,power,ratio,n1,n2,n_total,df,critical_t,ncp,actual_power
+ORACLE-01,Small effect Cohen benchmark 1-tail,a-priori,1,0.2,0.05,0.8,1.0,310,310,620,618,1.6473230,2.4899799,0.8002178
+ORACLE-02,Medium effect Cohen benchmark 1-tail,a-priori,1,0.5,0.05,0.8,1.0,51,51,102,100,1.6602343,2.5248762,0.8058986
+ORACLE-03,Large effect Cohen benchmark 1-tail,a-priori,1,0.8,0.05,0.8,1.0,21,21,42,40,1.6838510,2.5922963,0.8167878
+ORACLE-04,CONTRACT.md reference vector,a-priori,1,0.5,0.05,0.95,1.0,88,88,176,174,1.6536580,3.3166248,0.9514254
+ORACLE-05,Small effect 2-tail alpha=0.05,a-priori,2,0.2,0.05,0.8,1.0,394,394,788,786,1.9629867,2.8071338,0.8005931
+ORACLE-06,Medium effect 2-tail alpha=0.05,a-priori,2,0.5,0.05,0.8,1.0,64,64,128,126,1.9789706,2.8284271,0.8014596
+ORACLE-07,Large effect 2-tail alpha=0.05,a-priori,2,0.8,0.05,0.8,1.0,26,26,52,50,2.0085591,2.8844410,0.8074866
+ORACLE-08,Medium effect 2-tail power=0.90,a-priori,2,0.5,0.05,0.9,1.0,86,86,172,170,1.9740167,3.2787193,0.9032300
+ORACLE-09,Medium effect 2-tail power=0.95,a-priori,2,0.5,0.05,0.95,1.0,105,105,210,208,1.9714347,3.6228442,0.9501287
+ORACLE-10,Rigorous alpha=0.01 power=0.95,a-priori,2,0.5,0.01,0.95,1.0,145,145,290,288,2.5930077,4.2573466,0.9512341
+ORACLE-11,Ratio 1.5:1 unequal allocation,a-priori,2,0.5,0.05,0.8,1.5,53,80,133,131,1.9782385,2.8231055,0.8002156
+ORACLE-12,Ratio 2.0:1 unequal allocation (1:2 trial),a-priori,2,0.5,0.05,0.8,2.0,48,96,144,142,1.9768110,2.8284271,0.8021395
+ORACLE-13,Ratio 1.5:1 1-tail d=0.6,a-priori,1,0.6,0.05,0.9,1.5,41,62,103,101,1.6600806,2.9807147,0.9058797
+ORACLE-14,Ratio 0.5:1 unequal allocation (2:1 trial),a-priori,2,0.4,0.05,0.8,0.5,149,75,224,222,1.9707074,2.8252686,0.8031886
+ORACLE-15,Ratio 1.25:1 fractional unequal allocation,a-priori,2,0.7,0.05,0.85,1.25,34,43,77,75,1.9921022,3.0501863,0.8533577
+ORACLE-16,Stringent alpha=0.01,a-priori,2,0.6,0.01,0.9,1.0,85,85,170,168,2.6054101,3.9115214,0.9026761
+ORACLE-17,Extreme alpha=0.001 high power,a-priori,1,0.8,0.001,0.95,1.0,73,73,146,144,3.1477923,4.8332184,0.9517909
+ORACLE-18,Extreme alpha=0.001 medium effect,a-priori,2,0.5,0.001,0.9,1.0,894,894,1788,1786,3.2959827,10.5711873,1.0000000
+ORACLE-19,Low effect d=0.3 alpha=0.01,a-priori,1,0.3,0.01,0.8,1.0,225,225,450,448,2.3347003,3.1819805,0.8012279
+ORACLE-20,High power 99% test,a-priori,2,0.5,0.05,0.99,1.0,148,148,296,294,1.9680657,4.3011626,0.9900202
+ORACLE-21,High power 99% 1-tail,a-priori,1,0.5,0.05,0.99,1.0,127,127,254,252,1.6509228,3.9843444,0.9900642
+ORACLE-22,Moderate power 70% exploratory,a-priori,2,0.5,0.05,0.7,1.0,51,51,102,100,1.9839715,2.5248762,0.7056126
+ORACLE-23,Moderate power 75% 1-tail,a-priori,1,0.6,0.05,0.75,1.0,31,31,62,60,1.6706489,2.3622024,0.7550840
+ORACLE-24,Very small effect size d=0.1,a-priori,2,0.1,0.05,0.8,1.0,1571,1571,3142,3140,1.9607198,2.8026773,0.8000667
+ORACLE-25,Very small effect size d=0.1 1-tail,a-priori,1,0.1,0.05,0.9,1.0,1714,1714,3428,3426,1.6452985,2.9274562,0.9000830
+ORACLE-26,Very large effect size d=1.5,a-priori,2,1.5,0.05,0.95,1.0,13,13,26,24,2.0638986,3.8242646,0.9561118
+ORACLE-27,Extreme effect size d=2.0,a-priori,2,2.0,0.05,0.95,1.0,8,8,16,14,2.1447867,4.0000000,0.9602208
+ORACLE-28,Extreme effect size d=2.5 near lower bound,a-priori,1,2.5,0.05,0.99,1.0,6,6,12,10,1.8124611,4.3301270,0.9911009
+ORACLE-29,Clinical post-hoc balanced N=200,post-hoc,2,0.35,0.05,,1.0000,100,100,200,198,1.9720175,2.4748737,0.6924842
+ORACLE-30,Clinical post-hoc unequal N=150,post-hoc,2,0.45,0.05,,1.5000,60,90,150,148,1.9761225,2.7000000,0.7650013
+ORACLE-31,Clinical post-hoc 1-tail alpha=0.01,post-hoc,1,0.55,0.01,,1.0000,80,80,160,158,2.3501804,3.4785054,0.8691293
+ORACLE-32,Large study post-hoc N=500,post-hoc,2,0.25,0.05,,1.0000,250,250,500,498,1.9647390,2.7950850,0.7966544
+ORACLE-33,Small pilot post-hoc N=30,post-hoc,2,1.2,0.05,,1.0000,15,15,30,28,2.0484071,3.2863353,0.8871964

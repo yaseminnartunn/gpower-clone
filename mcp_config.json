@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gpower-clone": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\Acer\\OneDrive\\Desktop\\gpower-clone\\src\\mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}

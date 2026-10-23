@@ -1,0 +1,5 @@
+{"id":"t2-indep/a-priori","input":{"test":"t2-indep","mode":"a-priori","tails":1,"d":0.5,"alpha":0.05,"power":0.95,"ratio":1},"expected":{"ncp":3.3166248,"critical_t":1.6536580,"df":174,"n1":88,"n2":88,"n_total":176,"actual_power":0.9514254}}
+{"id":"t2-indep/post-hoc","input":{"test":"t2-indep","mode":"post-hoc","tails":1,"d":0.5,"alpha":0.05,"n1":88,"n2":88},"expected":{"ncp":3.3166248,"critical_t":1.6536580,"df":174,"power":0.9514254}}
+{"id":"t2-indep/compromise","input":{"test":"t2-indep","mode":"compromise","tails":1,"d":0.5,"beta_alpha_ratio":1,"n1":88,"n2":88},"expected":{"ncp":3.3166248,"critical_t":1.6606859,"df":174,"alpha":0.0492887,"beta":0.0492887,"power":0.9507113}}
+{"id":"t2-indep/criterion","input":{"test":"t2-indep","mode":"criterion","tails":1,"d":0.5,"power":0.95,"n1":88,"n2":88},"expected":{"ncp":3.3166248,"critical_t":1.6676050,"df":174,"alpha":0.0485965}}
+{"id":"t2-indep/sensitivity","input":{"test":"t2-indep","mode":"sensitivity","tails":1,"alpha":0.05,"power":0.95,"n1":88,"n2":88},"expected":{"ncp":3.3025887,"critical_t":1.6536580,"df":174,"d":0.4978840}}
